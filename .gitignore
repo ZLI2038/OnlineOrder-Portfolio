@@ -1,0 +1,27 @@
+**/node_modules/
+**/build/
+**/.gradle/
+**/__pycache__/
+benchmarks/results/*.pid
+benchmarks/results/*.log
+.DS_Store
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.idea/
+*.iml
+
+# Personal documents and resume exports stay on this computer
+/*.docx
+/*.pdf
+/resume-output/
+
+# Raw test logs contain machine-specific absolute paths
+/benchmarks/results/baseline-unit-tests/
+/benchmarks/results/optimized-java-tests/

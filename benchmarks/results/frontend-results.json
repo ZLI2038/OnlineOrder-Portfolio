@@ -1,0 +1,76 @@
+{
+  "scope": "React components with substituted Ant Design presentation controls and real HTTP requests; JSON response body bytes, not compressed wire bytes",
+  "restaurants_browsed": 10,
+  "baseline": {
+    "requests": 11,
+    "bytes": 3369340,
+    "responses": [
+      {
+        "url": "/restaurants/menu",
+        "status": 200,
+        "bytes": 3050551
+      },
+      {
+        "url": "/restaurant/1/menu",
+        "status": 200,
+        "bytes": 31577
+      },
+      {
+        "url": "/restaurant/2/menu",
+        "status": 200,
+        "bytes": 31901
+      },
+      {
+        "url": "/restaurant/3/menu",
+        "status": 200,
+        "bytes": 31901
+      },
+      {
+        "url": "/restaurant/4/menu",
+        "status": 200,
+        "bytes": 31901
+      },
+      {
+        "url": "/restaurant/5/menu",
+        "status": 200,
+        "bytes": 31901
+      },
+      {
+        "url": "/restaurant/6/menu",
+        "status": 200,
+        "bytes": 31901
+      },
+      {
+        "url": "/restaurant/7/menu",
+        "status": 200,
+        "bytes": 31901
+      },
+      {
+        "url": "/restaurant/8/menu",
+        "status": 200,
+        "bytes": 31901
+      },
+      {
+        "url": "/restaurant/9/menu",
+        "status": 200,
+        "bytes": 31901
+      },
+      {
+        "url": "/restaurant/10/menu",
+        "status": 200,
+        "bytes": 32004
+      }
+    ]
+  },
+  "optimized": {
+    "requests": 1,
+    "bytes": 3050551,
+    "responses": [
+      {
+        "url": "/restaurants/menu",
+        "status": 200,
+        "bytes": 3050551
+      }
+    ]
+  }
+}

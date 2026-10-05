@@ -1,0 +1,40 @@
+{
+  "baseline": {
+    "requests": 3000,
+    "median_round_p95_ms": 158.28125,
+    "sql_calls": 159000,
+    "errors": 0,
+    "round_p95_ms": [
+      158.28125,
+      171.673208,
+      150.379541
+    ]
+  },
+  "optimized": {
+    "requests": 3000,
+    "median_round_p95_ms": 23.743334,
+    "sql_calls": 12000,
+    "errors": 0,
+    "round_p95_ms": [
+      23.743334,
+      24.131292,
+      15.560375
+    ]
+  },
+  "cached": {
+    "requests": 3000,
+    "median_round_p95_ms": 11.438625,
+    "sql_calls": 3000,
+    "errors": 0,
+    "round_p95_ms": [
+      11.438625,
+      12.2615,
+      10.372084
+    ]
+  },
+  "cache_sql_reduction_pct": 75.0,
+  "cache_p95_reduction_pct": 51.82384664259872,
+  "batch_p95_reduction_pct": 84.99927565646594,
+  "frontend_bytes_saved": 318789,
+  "frontend_bytes_reduction_pct": 9.461467230971051
+}

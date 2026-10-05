@@ -1,0 +1,18 @@
+{
+  "restaurants": 100,
+  "menu_items": 10000,
+  "response_bytes": 3050551,
+  "sql": {
+    "total": 2,
+    "statements": [
+      {
+        "query": "SELECT \"menu_items\".\"id\" AS \"id\", \"menu_items\".\"name\" AS \"name\", \"menu_items\".\"price\" AS \"price\", \"menu_items\".\"image_url\" AS \"image_url\", \"menu_items\".\"description\" AS \"description\", \"menu_items\".\"restaurant_id\" AS \"restaurant_id\" FROM \"menu_items\"",
+        "calls": 1
+      },
+      {
+        "query": "SELECT \"restaurants\".\"id\" AS \"id\", \"restaurants\".\"name\" AS \"name\", \"restaurants\".\"phone\" AS \"phone\", \"restaurants\".\"address\" AS \"address\", \"restaurants\".\"image_url\" AS \"image_url\" FROM \"restaurants\"",
+        "calls": 1
+      }
+    ]
+  }
+}

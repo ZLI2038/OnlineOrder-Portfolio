@@ -1,0 +1,662 @@
+--- original/src/test/java/io/github/zli2038/onlineorder/CartServiceTests.java
++++ optimized/src/test/java/io/github/zli2038/onlineorder/CartServiceTests.java
+@@ -1,5 +1,6 @@
+ package io.github.zli2038.onlineorder;
+ 
++import java.math.BigDecimal;
+ import io.github.zli2038.onlineorder.entity.CartEntity;
+ import io.github.zli2038.onlineorder.entity.MenuItemEntity;
+ import io.github.zli2038.onlineorder.entity.OrderItemEntity;
+@@ -44,11 +45,11 @@
+         long customerId = 1L;
+         long menuItemId = 2L;
+         long cartId = 3L;
+-        CartEntity cartEntity = new CartEntity(cartId, customerId, 0.0);
+-        MenuItemEntity menuItem = new MenuItemEntity(menuItemId, 1L, "Name", "", 10.0, "");
++        CartEntity cartEntity = new CartEntity(cartId, customerId, new BigDecimal("0.0"));
++        MenuItemEntity menuItem = new MenuItemEntity(menuItemId, 1L, "Name", "", new BigDecimal("10.0"), "");
+ 
+         // Mock repository method calls
+-        Mockito.when(cartRepository.getByCustomerId(customerId)).thenReturn(cartEntity);
++        Mockito.when(cartRepository.getByCustomerIdForUpdate(customerId)).thenReturn(cartEntity);
+         Mockito.when(menuItemRepository.findById(menuItemId)).thenReturn(Optional.of(menuItem));
+         Mockito.when(orderItemRepository.findByCartIdAndMenuItemId(cartId, menuItemId)).thenReturn(null);
+ 
+@@ -56,9 +57,9 @@
+         cartService.addMenuItemToCart(customerId, menuItemId);
+ 
+         // Verify the repository method calls
+-        OrderItemEntity newOrderItem = new OrderItemEntity(null, menuItemId, cartId, 10.0, 1);
++        OrderItemEntity newOrderItem = new OrderItemEntity(null, menuItemId, cartId, new BigDecimal("10.0"), 1);
+         Mockito.verify(orderItemRepository).save(newOrderItem);
+-        Mockito.verify(cartRepository).updateTotalPrice(cartId, 10.0);
++        Mockito.verify(cartRepository).updateTotalPrice(cartId, new BigDecimal("10.0"));
+     }
+ 
+     @Test
+@@ -68,12 +69,12 @@
+         long menuItemId = 2L;
+         long cartId = 3L;
+         long orderItemId = 4L;
+-        CartEntity cartEntity = new CartEntity(cartId, customerId, 10.0);
+-        MenuItemEntity menuItem = new MenuItemEntity(menuItemId, 1L, "Name", "", 10.0, "");
+-        OrderItemEntity orderItemEntity = new OrderItemEntity(orderItemId, menuItemId, customerId, 10.0, 1);
++        CartEntity cartEntity = new CartEntity(cartId, customerId, new BigDecimal("10.0"));
++        MenuItemEntity menuItem = new MenuItemEntity(menuItemId, 1L, "Name", "", new BigDecimal("10.0"), "");
++        OrderItemEntity orderItemEntity = new OrderItemEntity(orderItemId, menuItemId, customerId, new BigDecimal("10.0"), 1);
+ 
+         // Mock repository method calls
+-        Mockito.when(cartRepository.getByCustomerId(customerId)).thenReturn(cartEntity);
++        Mockito.when(cartRepository.getByCustomerIdForUpdate(customerId)).thenReturn(cartEntity);
+         Mockito.when(menuItemRepository.findById(menuItemId)).thenReturn(Optional.of(menuItem));
+         Mockito.when(orderItemRepository.findByCartIdAndMenuItemId(cartId, menuItemId)).thenReturn(orderItemEntity);
+ 
+@@ -81,9 +82,9 @@
+         cartService.addMenuItemToCart(customerId, menuItemId);
+ 
+         // Verify the repository method calls
+-        OrderItemEntity newOrderItem = new OrderItemEntity(orderItemId, menuItemId, cartId, 10.0, 2);
++        OrderItemEntity newOrderItem = new OrderItemEntity(orderItemId, menuItemId, cartId, new BigDecimal("10.0"), 2);
+         Mockito.verify(orderItemRepository).save(newOrderItem);
+-        Mockito.verify(cartRepository).updateTotalPrice(cartId, 20.0);
++        Mockito.verify(cartRepository).updateTotalPrice(cartId, new BigDecimal("20.0"));
+     }
+ 
+     @Test
+@@ -91,21 +92,20 @@
+         // Mock data
+         long customerId = 1L;
+         long cartId = 3L;
+-        CartEntity cartEntity = new CartEntity(cartId, customerId, 21.0);
++        CartEntity cartEntity = new CartEntity(cartId, customerId, new BigDecimal("21.0"));
+         List<OrderItemEntity> orderItems = List.of(
+-                new OrderItemEntity(1L, 1L, cartId, 10.0, 1),
+-                new OrderItemEntity(2L, 2L, cartId, 10.0, 2)
++                new OrderItemEntity(1L, 1L, cartId, new BigDecimal("10.0"), 1),
++                new OrderItemEntity(2L, 2L, cartId, new BigDecimal("10.0"), 2)
+         );
+         List<MenuItemEntity> menuItems = List.of(
+-                new MenuItemEntity(1L, 1L, "Name1", "", 1.0, ""),
+-                new MenuItemEntity(2L, 1L, "Name2", "", 10.0, "")
++                new MenuItemEntity(1L, 1L, "Name1", "", new BigDecimal("1.0"), ""),
++                new MenuItemEntity(2L, 1L, "Name2", "", new BigDecimal("10.0"), "")
+         );
+ 
+         // Mock repository method calls
+         Mockito.when(cartRepository.getByCustomerId(customerId)).thenReturn(cartEntity);
+         Mockito.when(orderItemRepository.getAllByCartId(cartEntity.id())).thenReturn(orderItems);
+-        Mockito.when(menuItemRepository.findById(1L)).thenReturn(Optional.of(menuItems.get(0)));
+-        Mockito.when(menuItemRepository.findById(2L)).thenReturn(Optional.of(menuItems.get(1)));
++        Mockito.when(menuItemRepository.findAllById(List.of(1L, 2L))).thenReturn(menuItems);
+ 
+         // Perform the method under test
+         CartDto cartDto = cartService.getCart(customerId);
+@@ -121,16 +121,16 @@
+         // Mock data
+         long customerId = 1L;
+         long cartId = 2L;
+-        CartEntity cartEntity = new CartEntity(cartId, customerId, 21.0);
++        CartEntity cartEntity = new CartEntity(cartId, customerId, new BigDecimal("21.0"));
+ 
+         // Mock repository method calls
+-        Mockito.when(cartRepository.getByCustomerId(customerId)).thenReturn(cartEntity);
++        Mockito.when(cartRepository.getByCustomerIdForUpdate(customerId)).thenReturn(cartEntity);
+ 
+         // Perform the method under test
+         cartService.clearCart(customerId);
+ 
+         // Verify the repository method calls
+         Mockito.verify(orderItemRepository).deleteByCartId(cartId);
+-        Mockito.verify(cartRepository).updateTotalPrice(cartId, 0.0);
++        Mockito.verify(cartRepository).updateTotalPrice(cartId, BigDecimal.ZERO);
+     }
+ }
+--- original/src/main/resources/application.yaml
++++ optimized/src/main/resources/application.yaml
+@@ -12,7 +12,9 @@
+   sql:
+     init:
+       mode: ${INIT_DB:always}
+-      schema-locations: "classpath:database-init.sql"
++      schema-locations:
++        - "classpath:database-init.sql"
++        - "classpath:query-indexes.sql"
+   cache:
+     caffeine:
+       spec: expireAfterWrite=60s
+--- original/src/main/java/io/github/zli2038/onlineorder/DevRunner.java
++++ optimized/src/main/java/io/github/zli2038/onlineorder/DevRunner.java
+@@ -1,5 +1,6 @@
+ package io.github.zli2038.onlineorder;
+ 
++import java.math.BigDecimal;
+ import io.github.zli2038.onlineorder.entity.*;
+ import io.github.zli2038.onlineorder.model.RestaurantDto;
+ import io.github.zli2038.onlineorder.repository.*;
+@@ -10,11 +11,13 @@
+ import org.slf4j.LoggerFactory;
+ import org.springframework.boot.ApplicationArguments;
+ import org.springframework.boot.ApplicationRunner;
++import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+ import org.springframework.stereotype.Component;
+ 
+ import java.util.List;
+ 
+ @Component
++@ConditionalOnProperty(name = "onlineorder.seed-demo", havingValue = "true")
+ public class DevRunner implements ApplicationRunner {
+     // A logger for print
+     private static final Logger logger = LoggerFactory.getLogger(DevRunner.class);
+@@ -57,8 +60,8 @@
+         customerRepository.save(customer1);
+ 
+         cartRepository.saveAll(List.of(
+-                new CartEntity(null, 1L, 0.0),
+-                new CartEntity(null, 2L, 0.0)
++                new CartEntity(null, 1L, new BigDecimal("0.0")),
++                new CartEntity(null, 2L, new BigDecimal("0.0"))
+         ));
+ 
+         List<RestaurantEntity> newRestaurants = List.of(
+@@ -69,15 +72,15 @@
+         restaurantRepository.saveAll(newRestaurants);
+ 
+         List<MenuItemEntity> newMenuItems = List.of(
+-                new MenuItemEntity(null, 4L, "entree_aa", "description_aa", 10.0, "https://001.jpg"),
+-                new MenuItemEntity(null, 4L, "entree_ab", "description_ab", 20.0, "https://002.jpg"),
+-                new MenuItemEntity(null, 4L, "entree_ac", "description_ac", 33.3, "https://003.jpg"),
+-                new MenuItemEntity(null, 5L, "entree_ba", "description_ba", 1.0, "https://004.jpg"),
+-                new MenuItemEntity(null, 5L, "entree_bb", "description_bb", 2.0, "https://005.jpg"),
+-                new MenuItemEntity(null, 5L, "entree_bc", "description_bc", 3.3, "https://006.jpg"),
+-                new MenuItemEntity(null, 6L, "entree_ca", "description_ca", 100.0, "https://007.jpg"),
+-                new MenuItemEntity(null, 6L, "entree_cb", "description_cb", 200.0, "https://008.jpg"),
+-                new MenuItemEntity(null, 6L, "entree_dd", "description_cc", 333.3, "https://009.jpg")
++                new MenuItemEntity(null, 4L, "entree_aa", "description_aa", new BigDecimal("10.0"), "https://001.jpg"),
++                new MenuItemEntity(null, 4L, "entree_ab", "description_ab", new BigDecimal("20.0"), "https://002.jpg"),
++                new MenuItemEntity(null, 4L, "entree_ac", "description_ac", new BigDecimal("33.3"), "https://003.jpg"),
++                new MenuItemEntity(null, 5L, "entree_ba", "description_ba", new BigDecimal("1.0"), "https://004.jpg"),
++                new MenuItemEntity(null, 5L, "entree_bb", "description_bb", new BigDecimal("2.0"), "https://005.jpg"),
++                new MenuItemEntity(null, 5L, "entree_bc", "description_bc", new BigDecimal("3.3"), "https://006.jpg"),
++                new MenuItemEntity(null, 6L, "entree_ca", "description_ca", new BigDecimal("100.0"), "https://007.jpg"),
++                new MenuItemEntity(null, 6L, "entree_cb", "description_cb", new BigDecimal("200.0"), "https://008.jpg"),
++                new MenuItemEntity(null, 6L, "entree_dd", "description_cc", new BigDecimal("333.3"), "https://009.jpg")
+         );
+         menuItemRepository.saveAll(newMenuItems);
+ 
+--- original/src/main/java/io/github/zli2038/onlineorder/AppConfig.java
++++ optimized/src/main/java/io/github/zli2038/onlineorder/AppConfig.java
+@@ -52,7 +52,7 @@
+         userDetailsManager.setCreateUserSql("INSERT INTO customers (email, password, enabled) VALUES (?,?,?)");
+         userDetailsManager.setCreateAuthoritySql("INSERT INTO authorities (email, authority) values (?,?)");
+         userDetailsManager.setUsersByUsernameQuery("SELECT email, password, enabled FROM customers WHERE email = ?");
+-        userDetailsManager.setAuthoritiesByUsernameQuery("SELECT email, authorities FROM authorities WHERE email = ?");
++        userDetailsManager.setAuthoritiesByUsernameQuery("SELECT email, authority FROM authorities WHERE email = ?");
+         return userDetailsManager;
+     }
+ 
+--- original/src/main/java/io/github/zli2038/onlineorder/repository/CartRepository.java
++++ optimized/src/main/java/io/github/zli2038/onlineorder/repository/CartRepository.java
+@@ -4,12 +4,16 @@
+ import org.springframework.data.jdbc.repository.query.Modifying;
+ import org.springframework.data.jdbc.repository.query.Query;
+ import org.springframework.data.repository.ListCrudRepository;
++import java.math.BigDecimal;
+ 
+ public interface CartRepository extends ListCrudRepository<CartEntity, Long> {
+ 
+     CartEntity getByCustomerId(Long customerId);
+ 
++    @Query("SELECT * FROM carts WHERE customer_id = :customerId FOR UPDATE")
++    CartEntity getByCustomerIdForUpdate(Long customerId);
++
+     @Modifying
+     @Query("UPDATE carts SET total_price = :totalPrice WHERE id = :cartId")
+-    void updateTotalPrice(Long cartId, Double totalPrice);
++    void updateTotalPrice(Long cartId, BigDecimal totalPrice);
+ }
+--- original/src/main/java/io/github/zli2038/onlineorder/entity/OrderItemEntity.java
++++ optimized/src/main/java/io/github/zli2038/onlineorder/entity/OrderItemEntity.java
+@@ -1,5 +1,6 @@
+ package io.github.zli2038.onlineorder.entity;
+ 
++import java.math.BigDecimal;
+ import org.springframework.data.annotation.Id;
+ import org.springframework.data.relational.core.mapping.Table;
+ 
+@@ -8,7 +9,7 @@
+         @Id Long id,
+         Long menuItemId,
+         Long cartId,
+-        Double price,
++        BigDecimal price,
+         Integer quantity
+ ) {
+ }
+--- original/src/main/java/io/github/zli2038/onlineorder/entity/CartEntity.java
++++ optimized/src/main/java/io/github/zli2038/onlineorder/entity/CartEntity.java
+@@ -1,5 +1,6 @@
+ package io.github.zli2038.onlineorder.entity;
+ 
++import java.math.BigDecimal;
+ import org.springframework.data.annotation.Id;
+ import org.springframework.data.relational.core.mapping.Table;
+ 
+@@ -7,6 +8,6 @@
+ public record CartEntity(
+         @Id Long id,
+         Long customerId,
+-        Double totalPrice
++        BigDecimal totalPrice
+ ) {
+ }
+--- original/src/main/java/io/github/zli2038/onlineorder/entity/MenuItemEntity.java
++++ optimized/src/main/java/io/github/zli2038/onlineorder/entity/MenuItemEntity.java
+@@ -1,5 +1,6 @@
+ package io.github.zli2038.onlineorder.entity;
+ 
++import java.math.BigDecimal;
+ import org.springframework.data.annotation.Id;
+ import org.springframework.data.relational.core.mapping.Table;
+ 
+@@ -9,7 +10,7 @@
+         Long restaurantId,
+         String name,
+         String description,
+-        Double price,
++        BigDecimal price,
+         String imageUrl
+ ) {
+ }
+--- original/src/main/java/io/github/zli2038/onlineorder/model/MenuItemDto.java
++++ optimized/src/main/java/io/github/zli2038/onlineorder/model/MenuItemDto.java
+@@ -1,12 +1,13 @@
+ package io.github.zli2038.onlineorder.model;
+ 
++import java.math.BigDecimal;
+ import io.github.zli2038.onlineorder.entity.MenuItemEntity;
+ 
+ public record MenuItemDto(
+         Long id,
+         String name,
+         String description,
+-        Double price,
++        BigDecimal price,
+         String imageUrl
+ ) {
+     public MenuItemDto(MenuItemEntity entity) {
+--- original/src/main/java/io/github/zli2038/onlineorder/model/OrderItemDto.java
++++ optimized/src/main/java/io/github/zli2038/onlineorder/model/OrderItemDto.java
+@@ -1,10 +1,14 @@
+ package io.github.zli2038.onlineorder.model;
++
++import java.math.BigDecimal;
++import io.github.zli2038.onlineorder.entity.MenuItemEntity;
++import io.github.zli2038.onlineorder.entity.OrderItemEntity;
+ 
+ public record OrderItemDto(
+         Long orderItemId,
+         Long menuItemId,
+         Long restaurantId,
+-        Double price,
++        BigDecimal price,
+         Integer quantity,
+         String menuItemName,
+         String menuItemDescription,
+--- original/src/main/java/io/github/zli2038/onlineorder/model/CartDto.java
++++ optimized/src/main/java/io/github/zli2038/onlineorder/model/CartDto.java
+@@ -1,12 +1,13 @@
+ package io.github.zli2038.onlineorder.model;
+ 
++import java.math.BigDecimal;
+ import io.github.zli2038.onlineorder.entity.CartEntity;
+ 
+ import java.util.List;
+ 
+ public record CartDto(
+         Long id,
+-        Double totalPrice,
++        BigDecimal totalPrice,
+         List<OrderItemDto> orderItems
+ ) {
+     public CartDto(CartEntity entity, List<OrderItemDto> orderItems) {
+--- original/src/main/java/io/github/zli2038/onlineorder/service/CartService.java
++++ optimized/src/main/java/io/github/zli2038/onlineorder/service/CartService.java
+@@ -13,8 +13,11 @@
+ import org.springframework.stereotype.Service;
+ import org.springframework.transaction.annotation.Transactional;
+ 
+-import java.util.ArrayList;
+ import java.util.List;
++import java.util.Map;
++import java.util.function.Function;
++import java.util.stream.Collectors;
++import java.math.BigDecimal;
+ 
+ @Service
+ public class CartService {
+@@ -35,7 +38,7 @@
+     @CacheEvict(cacheNames = "cart", key = "#customerId")
+     @Transactional
+     public void addMenuItemToCart(long customerId, long menuItemId) {
+-        CartEntity cart = cartRepository.getByCustomerId(customerId);
++        CartEntity cart = cartRepository.getByCustomerIdForUpdate(customerId);
+         MenuItemEntity menuItem = menuItemRepository.findById(menuItemId).get();
+         OrderItemEntity orderItem = orderItemRepository.findByCartIdAndMenuItemId(cart.id(), menuItem.id());
+ 
+@@ -51,7 +54,7 @@
+         }
+         OrderItemEntity newOrderItem = new OrderItemEntity(orderItemId, menuItemId, cart.id(), menuItem.price(), quantity);
+         orderItemRepository.save(newOrderItem);
+-        cartRepository.updateTotalPrice(cart.id(), cart.totalPrice() + menuItem.price());
++        cartRepository.updateTotalPrice(cart.id(), cart.totalPrice().add(menuItem.price()));
+     }
+ 
+     @Cacheable("cart")
+@@ -65,18 +68,20 @@
+     @CacheEvict(cacheNames = "cart", key = "#customerId")
+     @Transactional
+     public void clearCart(Long customerId) {
+-        CartEntity cartEntity = cartRepository.getByCustomerId(customerId);
++        CartEntity cartEntity = cartRepository.getByCustomerIdForUpdate(customerId);
+         orderItemRepository.deleteByCartId(cartEntity.id());
+-        cartRepository.updateTotalPrice(cartEntity.id(), 0.0);
++        cartRepository.updateTotalPrice(cartEntity.id(), BigDecimal.ZERO);
+     }
+ 
+     private List<OrderItemDto> getOrderItemDtos(List<OrderItemEntity> orderItems) {
+-        List<OrderItemDto> orderItemDtos = new ArrayList<>();
+-        for (OrderItemEntity orderItem : orderItems) {
+-            MenuItemEntity menuItem = menuItemRepository.findById(orderItem.menuItemId()).get();
+-            OrderItemDto orderItemDto = new OrderItemDto(orderItem, menuItem);
+-            orderItemDtos.add(orderItemDto);
++        if (orderItems.isEmpty()) {
++            return List.of();
+         }
+-        return orderItemDtos;
++        List<Long> menuItemIds = orderItems.stream().map(OrderItemEntity::menuItemId).distinct().toList();
++        Map<Long, MenuItemEntity> menuItems = menuItemRepository.findAllById(menuItemIds).stream()
++                .collect(Collectors.toMap(MenuItemEntity::id, Function.identity()));
++        return orderItems.stream()
++                .map(item -> new OrderItemDto(item, menuItems.get(item.menuItemId())))
++                .toList();
+     }
+ }
+--- original/src/main/java/io/github/zli2038/onlineorder/service/CustomerService.java
++++ optimized/src/main/java/io/github/zli2038/onlineorder/service/CustomerService.java
+@@ -1,5 +1,6 @@
+ package io.github.zli2038.onlineorder.service;
+ 
++import java.math.BigDecimal;
+ import io.github.zli2038.onlineorder.entity.CartEntity;
+ import io.github.zli2038.onlineorder.entity.CustomerEntity;
+ import io.github.zli2038.onlineorder.repository.CartRepository;
+@@ -42,7 +43,7 @@
+         customerRepository.updateNameByEmail(email, firstName, lastName);
+ 
+         CustomerEntity savedCustomer = customerRepository.findByEmail(email);
+-        CartEntity cart = new CartEntity(null, savedCustomer.id(), 0.0);
++        CartEntity cart = new CartEntity(null, savedCustomer.id(), new BigDecimal("0.0"));
+         cartRepository.save(cart);
+     }
+ 
+--- original/doordash-app/src/components/FoodList.js
++++ optimized/doordash-app/src/components/FoodList.js
+@@ -1,6 +1,6 @@
+ import { Button, Card, List, message, Select, Tooltip } from "antd";
+ import { useEffect, useState } from "react";
+-import { addItemToCart, getMenus, getRestaurants } from "../utils";
++import { addItemToCart, getRestaurants } from "../utils";
+ import { PlusOutlined } from "@ant-design/icons";
+ 
+ const { Option } = Select;
+@@ -31,11 +31,10 @@
+ };
+ 
+ const FoodList = () => {
+-  const [foodData, setFoodData] = useState([]);
+   const [curRest, setCurRest] = useState();
+   const [restaurants, setRestaurants] = useState([]);
+-  const [loading, setLoading] = useState(false);
+   const [loadingRest, setLoadingRest] = useState(false);
++  const foodData = restaurants.find((restaurant) => restaurant.id === curRest)?.menu_items ?? [];
+ 
+   useEffect(() => {
+     setLoadingRest(true);
+@@ -51,22 +50,6 @@
+       });
+   }, []);
+ 
+-  useEffect(() => {
+-    if (curRest) {
+-      setLoading(true);
+-      getMenus(curRest)
+-        .then((data) => {
+-          setFoodData(data);
+-        })
+-        .catch((err) => {
+-          message.error(err.message);
+-        })
+-        .finally(() => {
+-          setLoading(false);
+-        });
+-    }
+-  }, [curRest]);
+-
+   return (
+     <>
+       <Select
+@@ -78,13 +61,12 @@
+         onChange={() => {}}
+       >
+         {restaurants.map((item) => {
+-          return <Option value={item.id}>{item.name}</Option>;
++          return <Option key={item.id} value={item.id}>{item.name}</Option>;
+         })}
+       </Select>
+       {curRest && (
+         <List
+           style={{ marginTop: 20 }}
+-          loading={loading}
+           grid={{
+             gutter: 16,
+             xs: 1,
+--- /dev/null
++++ optimized/src/main/resources/query-indexes.sql
+@@ -0,0 +1,3 @@
++-- Applicable to an existing schema. Resolve any duplicate cart/menu pairs before migrating.
++CREATE INDEX IF NOT EXISTS idx_menu_items_restaurant ON menu_items (restaurant_id);
++CREATE UNIQUE INDEX IF NOT EXISTS uq_order_items_cart_menu ON order_items (cart_id, menu_item_id);
+--- /dev/null
++++ optimized/src/test/java/io/github/zli2038/onlineorder/CartDatabaseIntegrationTests.java
+@@ -0,0 +1,191 @@
++package io.github.zli2038.onlineorder;
++
++import io.github.zli2038.onlineorder.service.CartService;
++import io.github.zli2038.onlineorder.service.CustomerService;
++import org.junit.jupiter.api.BeforeEach;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.boot.test.context.SpringBootTest;
++import org.springframework.cache.CacheManager;
++import org.springframework.jdbc.core.JdbcTemplate;
++import org.springframework.test.context.DynamicPropertyRegistry;
++import org.springframework.test.context.DynamicPropertySource;
++
++import java.math.BigDecimal;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.concurrent.CountDownLatch;
++import java.util.concurrent.Executors;
++import java.util.concurrent.Future;
++import java.util.concurrent.TimeUnit;
++
++import static org.junit.jupiter.api.Assertions.*;
++
++@EnabledIfEnvironmentVariable(named = "ONLINEORDER_TEST_DB_URL", matches = ".+/onlineorder_integration")
++@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
++        "spring.sql.init.mode=never", "onlineorder.seed-demo=false", "spring.cache.type=caffeine",
++        "spring.datasource.hikari.maximum-pool-size=32", "logging.level.root=WARN",
++        "logging.level.org.springframework.jdbc.core=WARN",
++        "logging.level.org.apache.coyote.http11.Http11InputBuffer=WARN"
++})
++class CartDatabaseIntegrationTests {
++    @Autowired JdbcTemplate jdbc;
++    @Autowired CartService carts;
++    @Autowired CustomerService customers;
++    @Autowired CacheManager caches;
++
++    @DynamicPropertySource
++    static void database(DynamicPropertyRegistry registry) {
++        registry.add("spring.datasource.url", () -> System.getenv("ONLINEORDER_TEST_DB_URL"));
++        registry.add("spring.datasource.username", () -> "postgres");
++        registry.add("spring.datasource.password", () -> "benchmark-local-only");
++    }
++
++    @BeforeEach
++    void reset() {
++        assertEquals("onlineorder_integration", jdbc.queryForObject("SELECT current_database()", String.class));
++        jdbc.execute("DROP TRIGGER IF EXISTS fail_cart_update ON carts");
++        jdbc.execute("DROP TRIGGER IF EXISTS fail_cart_insert ON carts");
++        jdbc.execute("DROP FUNCTION IF EXISTS benchmark_failure()");
++        jdbc.execute("TRUNCATE customers,authorities,carts,restaurants,menu_items,order_items RESTART IDENTITY CASCADE");
++        jdbc.update("INSERT INTO customers(id,email,password) VALUES (1,'one@example.test','{noop}password'),(2,'two@example.test','{noop}password')");
++        jdbc.update("INSERT INTO carts(id,customer_id,total_price) VALUES (1,1,0),(2,2,0)");
++        jdbc.execute("SELECT setval(pg_get_serial_sequence('customers','id'),2)");
++        jdbc.execute("SELECT setval(pg_get_serial_sequence('carts','id'),2)");
++        jdbc.update("INSERT INTO restaurants(id,name) VALUES (1,'Test restaurant')");
++        jdbc.update("INSERT INTO menu_items(id,restaurant_id,name,price) VALUES (1,1,'First',0.10),(2,1,'Second',0.20)");
++        for (String name : caches.getCacheNames()) {
++            caches.getCache(name).clear();
++        }
++    }
++
++    private void assertCart(long id, int quantity, String total) {
++        assertEquals(quantity, jdbc.queryForObject("SELECT COALESCE(sum(quantity),0) FROM order_items WHERE cart_id=?", Integer.class, id));
++        BigDecimal actual = jdbc.queryForObject("SELECT total_price FROM carts WHERE id=?", BigDecimal.class, id);
++        BigDecimal sum = jdbc.queryForObject("SELECT COALESCE(sum(price*quantity),0) FROM order_items WHERE cart_id=?", BigDecimal.class, id);
++        assertEquals(0, new BigDecimal(total).compareTo(actual));
++        assertEquals(0, actual.compareTo(sum));
++    }
++
++    private void failOnCart(String event, String name) {
++        jdbc.execute("CREATE FUNCTION benchmark_failure() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'injected benchmark failure'; END $$");
++        jdbc.execute("CREATE TRIGGER " + name + " BEFORE " + event + " ON carts FOR EACH ROW EXECUTE FUNCTION benchmark_failure()");
++    }
++
++    @Test void insertsAnItemAndItsTotal() {
++        carts.addMenuItemToCart(1,1);
++        assertCart(1,1,"0.10");
++    }
++
++    @Test void incrementsAnExistingItemWithoutDuplicatingRows() {
++        carts.addMenuItemToCart(1,1);
++        carts.addMenuItemToCart(1,1);
++        assertCart(1,2,"0.20");
++        assertEquals(1,jdbc.queryForObject("SELECT count(*) FROM order_items",Integer.class));
++    }
++
++    @Test void keepsDecimalAmountsExactAcrossRepeatedAdditions() {
++        for (int i=0;i<100;i++) carts.addMenuItemToCart(1,1);
++        assertCart(1,100,"10.00");
++    }
++
++    @Test void clearsItemsAndTotalTogether() {
++        carts.addMenuItemToCart(1,1);
++        carts.addMenuItemToCart(1,2);
++        carts.clearCart(1L);
++        assertCart(1,0,"0");
++    }
++
++    @Test void rollsBackItemInsertionIfUpdatingTotalFails() {
++        failOnCart("UPDATE","fail_cart_update");
++        assertThrows(RuntimeException.class, () -> carts.addMenuItemToCart(1,1));
++        assertCart(1,0,"0");
++    }
++
++    @Test void rollsBackItemIncrementIfUpdatingTotalFails() {
++        carts.addMenuItemToCart(1,1);
++        failOnCart("UPDATE","fail_cart_update");
++        assertThrows(RuntimeException.class, () -> carts.addMenuItemToCart(1,1));
++        assertCart(1,1,"0.10");
++    }
++
++    @Test void rollsBackClearingItemsIfResettingTotalFails() {
++        carts.addMenuItemToCart(1,1);
++        failOnCart("UPDATE","fail_cart_update");
++        assertThrows(RuntimeException.class, () -> carts.clearCart(1L));
++        assertCart(1,1,"0.10");
++    }
++
++    @Test void rollsBackCredentialsAndAuthoritiesIfCreatingCartFails() {
++        failOnCart("INSERT","fail_cart_insert");
++        assertThrows(RuntimeException.class, () -> customers.signUp("new@example.test","password","First","Last"));
++        assertEquals(0,jdbc.queryForObject("SELECT count(*) FROM customers WHERE email='new@example.test'",Integer.class));
++        assertEquals(0,jdbc.queryForObject("SELECT count(*) FROM authorities WHERE email='new@example.test'",Integer.class));
++    }
++
++    @Test void successfulSignupCreatesCredentialsAuthorityAndOneCart() {
++        customers.signUp("NEW@example.test","password","First","Last");
++        Long id=jdbc.queryForObject("SELECT id FROM customers WHERE email='new@example.test'",Long.class);
++        assertEquals(1,jdbc.queryForObject("SELECT count(*) FROM carts WHERE customer_id=?",Integer.class,id));
++        assertEquals("ROLE_USER",jdbc.queryForObject("SELECT authority FROM authorities WHERE email='new@example.test'",String.class));
++    }
++
++    @Test void mutationInvalidatesOnlyTheAffectedCustomersCache() {
++        carts.getCart(1L);
++        carts.getCart(2L);
++        assertNotNull(caches.getCache("cart").get(1L));
++        carts.addMenuItemToCart(1,1);
++        assertNull(caches.getCache("cart").get(1L));
++        assertNotNull(caches.getCache("cart").get(2L));
++        assertEquals(1,carts.getCart(1L).orderItems().size());
++        carts.clearCart(1L);
++        assertTrue(carts.getCart(1L).orderItems().isEmpty());
++    }
++
++    @ParameterizedTest
++    @ValueSource(ints={8,16,32})
++    void concurrentAdditionsToTheSameItemPreserveAllWrites(int workers) throws Exception {
++        int iterations=10;
++        try (var pool=Executors.newFixedThreadPool(workers)) {
++            var ready=new CountDownLatch(workers);
++            var start=new CountDownLatch(1);
++            List<Future<?>> tasks=new ArrayList<>();
++            for(int i=0;i<workers;i++) tasks.add(pool.submit(() -> {
++                ready.countDown();
++                try { assertTrue(start.await(10,TimeUnit.SECONDS)); }
++                catch(InterruptedException e) { throw new RuntimeException(e); }
++                for(int j=0;j<iterations;j++) carts.addMenuItemToCart(1,1);
++            }));
++            assertTrue(ready.await(10,TimeUnit.SECONDS));
++            start.countDown();
++            for(Future<?> task:tasks) task.get(60,TimeUnit.SECONDS);
++        }
++        assertCart(1,workers*iterations,BigDecimal.valueOf(workers).toPlainString());
++        assertEquals(1,jdbc.queryForObject("SELECT count(*) FROM order_items",Integer.class));
++    }
++
++    @Test void concurrentAdditionsToDifferentItemsPreserveTotal() throws Exception {
++        try(var pool=Executors.newFixedThreadPool(32)) {
++            var ready=new CountDownLatch(32);
++            var start=new CountDownLatch(1);
++            List<Future<?>> tasks=new ArrayList<>();
++            for(int i=0;i<32;i++) {
++                long item=i%2+1;
++                tasks.add(pool.submit(() -> {
++                    ready.countDown();
++                    try { assertTrue(start.await(10,TimeUnit.SECONDS)); }
++                    catch(InterruptedException e) { throw new RuntimeException(e); }
++                    for(int j=0;j<10;j++) carts.addMenuItemToCart(1,item);
++                }));
++            }
++            assertTrue(ready.await(10,TimeUnit.SECONDS));
++            start.countDown();
++            for(Future<?> task:tasks) task.get(60,TimeUnit.SECONDS);
++        }
++        assertCart(1,320,"48.00");
++        assertEquals(2,jdbc.queryForObject("SELECT count(*) FROM order_items",Integer.class));
++    }
++}

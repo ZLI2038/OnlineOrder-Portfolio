@@ -1,0 +1,281 @@
+[
+  {
+    "name": "baseline",
+    "trial": 1,
+    "requests": 1000,
+    "concurrency": 20,
+    "users": 100,
+    "cart_lines": 50,
+    "duration_seconds": 6.246118042618036,
+    "requests_per_second": 160.09943987239373,
+    "p50_ms": 120.690583,
+    "p95_ms": 158.28125,
+    "p99_ms": 172.908625,
+    "errors": 0,
+    "sql": {
+      "total": 53000,
+      "statements": [
+        {
+          "query": "SELECT \"customers\".\"id\" AS \"id\", \"customers\".\"email\" AS \"email\", \"customers\".\"enabled\" AS \"enabled\", \"customers\".\"last_name\" AS \"last_name\", \"customers\".\"password\" AS \"password\", \"customers\".\"first_name\" AS \"first_name\" FROM \"customers\" WHERE \"customers\".\"email\" = $1",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"menu_items\".\"id\" AS \"id\", \"menu_items\".\"name\" AS \"name\", \"menu_items\".\"price\" AS \"price\", \"menu_items\".\"image_url\" AS \"image_url\", \"menu_items\".\"description\" AS \"description\", \"menu_items\".\"restaurant_id\" AS \"restaurant_id\" FROM \"menu_items\" WHERE \"menu_items\".\"id\" = $1",
+          "calls": 50000
+        },
+        {
+          "query": "SELECT \"order_items\".\"id\" AS \"id\", \"order_items\".\"price\" AS \"price\", \"order_items\".\"cart_id\" AS \"cart_id\", \"order_items\".\"quantity\" AS \"quantity\", \"order_items\".\"menu_item_id\" AS \"menu_item_id\" FROM \"order_items\" WHERE \"order_items\".\"cart_id\" = $1",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"carts\".\"id\" AS \"id\", \"carts\".\"total_price\" AS \"total_price\", \"carts\".\"customer_id\" AS \"customer_id\" FROM \"carts\" WHERE \"carts\".\"customer_id\" = $1",
+          "calls": 1000
+        }
+      ]
+    }
+  },
+  {
+    "name": "optimized",
+    "trial": 1,
+    "requests": 1000,
+    "concurrency": 20,
+    "users": 100,
+    "cart_lines": 50,
+    "duration_seconds": 0.6991039998829365,
+    "requests_per_second": 1430.4023438107176,
+    "p50_ms": 12.562917,
+    "p95_ms": 23.743334,
+    "p99_ms": 35.154208,
+    "errors": 0,
+    "sql": {
+      "total": 4000,
+      "statements": [
+        {
+          "query": "SELECT \"menu_items\".\"id\" AS \"id\", \"menu_items\".\"name\" AS \"name\", \"menu_items\".\"price\" AS \"price\", \"menu_items\".\"image_url\" AS \"image_url\", \"menu_items\".\"description\" AS \"description\", \"menu_items\".\"restaurant_id\" AS \"restaurant_id\" FROM \"menu_items\" WHERE \"menu_items\".\"id\" IN ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50)",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"customers\".\"id\" AS \"id\", \"customers\".\"email\" AS \"email\", \"customers\".\"enabled\" AS \"enabled\", \"customers\".\"last_name\" AS \"last_name\", \"customers\".\"password\" AS \"password\", \"customers\".\"first_name\" AS \"first_name\" FROM \"customers\" WHERE \"customers\".\"email\" = $1",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"order_items\".\"id\" AS \"id\", \"order_items\".\"price\" AS \"price\", \"order_items\".\"cart_id\" AS \"cart_id\", \"order_items\".\"quantity\" AS \"quantity\", \"order_items\".\"menu_item_id\" AS \"menu_item_id\" FROM \"order_items\" WHERE \"order_items\".\"cart_id\" = $1",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"carts\".\"id\" AS \"id\", \"carts\".\"total_price\" AS \"total_price\", \"carts\".\"customer_id\" AS \"customer_id\" FROM \"carts\" WHERE \"carts\".\"customer_id\" = $1",
+          "calls": 1000
+        }
+      ]
+    }
+  },
+  {
+    "name": "cached",
+    "trial": 1,
+    "requests": 1000,
+    "concurrency": 20,
+    "users": 100,
+    "cart_lines": 50,
+    "duration_seconds": 0.32805720809847116,
+    "requests_per_second": 3048.2488276856743,
+    "p50_ms": 5.297166,
+    "p95_ms": 11.438625,
+    "p99_ms": 21.498208,
+    "errors": 0,
+    "sql": {
+      "total": 1000,
+      "statements": [
+        {
+          "query": "SELECT \"customers\".\"id\" AS \"id\", \"customers\".\"email\" AS \"email\", \"customers\".\"enabled\" AS \"enabled\", \"customers\".\"last_name\" AS \"last_name\", \"customers\".\"password\" AS \"password\", \"customers\".\"first_name\" AS \"first_name\" FROM \"customers\" WHERE \"customers\".\"email\" = $1",
+          "calls": 1000
+        }
+      ]
+    }
+  },
+  {
+    "name": "cached",
+    "trial": 2,
+    "requests": 1000,
+    "concurrency": 20,
+    "users": 100,
+    "cart_lines": 50,
+    "duration_seconds": 0.31843870878219604,
+    "requests_per_second": 3140.3217398547313,
+    "p50_ms": 5.228709,
+    "p95_ms": 12.2615,
+    "p99_ms": 18.743042,
+    "errors": 0,
+    "sql": {
+      "total": 1000,
+      "statements": [
+        {
+          "query": "SELECT \"customers\".\"id\" AS \"id\", \"customers\".\"email\" AS \"email\", \"customers\".\"enabled\" AS \"enabled\", \"customers\".\"last_name\" AS \"last_name\", \"customers\".\"password\" AS \"password\", \"customers\".\"first_name\" AS \"first_name\" FROM \"customers\" WHERE \"customers\".\"email\" = $1",
+          "calls": 1000
+        }
+      ]
+    }
+  },
+  {
+    "name": "baseline",
+    "trial": 2,
+    "requests": 1000,
+    "concurrency": 20,
+    "users": 100,
+    "cart_lines": 50,
+    "duration_seconds": 6.312116208486259,
+    "requests_per_second": 158.4254736399752,
+    "p50_ms": 121.975875,
+    "p95_ms": 171.673208,
+    "p99_ms": 207.11625,
+    "errors": 0,
+    "sql": {
+      "total": 53000,
+      "statements": [
+        {
+          "query": "SELECT \"customers\".\"id\" AS \"id\", \"customers\".\"email\" AS \"email\", \"customers\".\"enabled\" AS \"enabled\", \"customers\".\"last_name\" AS \"last_name\", \"customers\".\"password\" AS \"password\", \"customers\".\"first_name\" AS \"first_name\" FROM \"customers\" WHERE \"customers\".\"email\" = $1",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"menu_items\".\"id\" AS \"id\", \"menu_items\".\"name\" AS \"name\", \"menu_items\".\"price\" AS \"price\", \"menu_items\".\"image_url\" AS \"image_url\", \"menu_items\".\"description\" AS \"description\", \"menu_items\".\"restaurant_id\" AS \"restaurant_id\" FROM \"menu_items\" WHERE \"menu_items\".\"id\" = $1",
+          "calls": 50000
+        },
+        {
+          "query": "SELECT \"order_items\".\"id\" AS \"id\", \"order_items\".\"price\" AS \"price\", \"order_items\".\"cart_id\" AS \"cart_id\", \"order_items\".\"quantity\" AS \"quantity\", \"order_items\".\"menu_item_id\" AS \"menu_item_id\" FROM \"order_items\" WHERE \"order_items\".\"cart_id\" = $1",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"carts\".\"id\" AS \"id\", \"carts\".\"total_price\" AS \"total_price\", \"carts\".\"customer_id\" AS \"customer_id\" FROM \"carts\" WHERE \"carts\".\"customer_id\" = $1",
+          "calls": 1000
+        }
+      ]
+    }
+  },
+  {
+    "name": "optimized",
+    "trial": 2,
+    "requests": 1000,
+    "concurrency": 20,
+    "users": 100,
+    "cart_lines": 50,
+    "duration_seconds": 0.7194396257400513,
+    "requests_per_second": 1389.9706997252902,
+    "p50_ms": 12.842625,
+    "p95_ms": 24.131292,
+    "p99_ms": 32.422542,
+    "errors": 0,
+    "sql": {
+      "total": 4000,
+      "statements": [
+        {
+          "query": "SELECT \"menu_items\".\"id\" AS \"id\", \"menu_items\".\"name\" AS \"name\", \"menu_items\".\"price\" AS \"price\", \"menu_items\".\"image_url\" AS \"image_url\", \"menu_items\".\"description\" AS \"description\", \"menu_items\".\"restaurant_id\" AS \"restaurant_id\" FROM \"menu_items\" WHERE \"menu_items\".\"id\" IN ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50)",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"customers\".\"id\" AS \"id\", \"customers\".\"email\" AS \"email\", \"customers\".\"enabled\" AS \"enabled\", \"customers\".\"last_name\" AS \"last_name\", \"customers\".\"password\" AS \"password\", \"customers\".\"first_name\" AS \"first_name\" FROM \"customers\" WHERE \"customers\".\"email\" = $1",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"order_items\".\"id\" AS \"id\", \"order_items\".\"price\" AS \"price\", \"order_items\".\"cart_id\" AS \"cart_id\", \"order_items\".\"quantity\" AS \"quantity\", \"order_items\".\"menu_item_id\" AS \"menu_item_id\" FROM \"order_items\" WHERE \"order_items\".\"cart_id\" = $1",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"carts\".\"id\" AS \"id\", \"carts\".\"total_price\" AS \"total_price\", \"carts\".\"customer_id\" AS \"customer_id\" FROM \"carts\" WHERE \"carts\".\"customer_id\" = $1",
+          "calls": 1000
+        }
+      ]
+    }
+  },
+  {
+    "name": "optimized",
+    "trial": 3,
+    "requests": 1000,
+    "concurrency": 20,
+    "users": 100,
+    "cart_lines": 50,
+    "duration_seconds": 0.5349124576896429,
+    "requests_per_second": 1869.4647799363865,
+    "p50_ms": 9.828917,
+    "p95_ms": 15.560375,
+    "p99_ms": 18.897834,
+    "errors": 0,
+    "sql": {
+      "total": 4000,
+      "statements": [
+        {
+          "query": "SELECT \"menu_items\".\"id\" AS \"id\", \"menu_items\".\"name\" AS \"name\", \"menu_items\".\"price\" AS \"price\", \"menu_items\".\"image_url\" AS \"image_url\", \"menu_items\".\"description\" AS \"description\", \"menu_items\".\"restaurant_id\" AS \"restaurant_id\" FROM \"menu_items\" WHERE \"menu_items\".\"id\" IN ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50)",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"customers\".\"id\" AS \"id\", \"customers\".\"email\" AS \"email\", \"customers\".\"enabled\" AS \"enabled\", \"customers\".\"last_name\" AS \"last_name\", \"customers\".\"password\" AS \"password\", \"customers\".\"first_name\" AS \"first_name\" FROM \"customers\" WHERE \"customers\".\"email\" = $1",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"order_items\".\"id\" AS \"id\", \"order_items\".\"price\" AS \"price\", \"order_items\".\"cart_id\" AS \"cart_id\", \"order_items\".\"quantity\" AS \"quantity\", \"order_items\".\"menu_item_id\" AS \"menu_item_id\" FROM \"order_items\" WHERE \"order_items\".\"cart_id\" = $1",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"carts\".\"id\" AS \"id\", \"carts\".\"total_price\" AS \"total_price\", \"carts\".\"customer_id\" AS \"customer_id\" FROM \"carts\" WHERE \"carts\".\"customer_id\" = $1",
+          "calls": 1000
+        }
+      ]
+    }
+  },
+  {
+    "name": "cached",
+    "trial": 3,
+    "requests": 1000,
+    "concurrency": 20,
+    "users": 100,
+    "cart_lines": 50,
+    "duration_seconds": 0.28032004181295633,
+    "requests_per_second": 3567.351066062021,
+    "p50_ms": 4.744166,
+    "p95_ms": 10.372084,
+    "p99_ms": 15.184,
+    "errors": 0,
+    "sql": {
+      "total": 1000,
+      "statements": [
+        {
+          "query": "SELECT \"customers\".\"id\" AS \"id\", \"customers\".\"email\" AS \"email\", \"customers\".\"enabled\" AS \"enabled\", \"customers\".\"last_name\" AS \"last_name\", \"customers\".\"password\" AS \"password\", \"customers\".\"first_name\" AS \"first_name\" FROM \"customers\" WHERE \"customers\".\"email\" = $1",
+          "calls": 1000
+        }
+      ]
+    }
+  },
+  {
+    "name": "baseline",
+    "trial": 3,
+    "requests": 1000,
+    "concurrency": 20,
+    "users": 100,
+    "cart_lines": 50,
+    "duration_seconds": 6.188083458691835,
+    "requests_per_second": 161.60092323825907,
+    "p50_ms": 121.460709,
+    "p95_ms": 150.379541,
+    "p99_ms": 159.543042,
+    "errors": 0,
+    "sql": {
+      "total": 53000,
+      "statements": [
+        {
+          "query": "SELECT \"customers\".\"id\" AS \"id\", \"customers\".\"email\" AS \"email\", \"customers\".\"enabled\" AS \"enabled\", \"customers\".\"last_name\" AS \"last_name\", \"customers\".\"password\" AS \"password\", \"customers\".\"first_name\" AS \"first_name\" FROM \"customers\" WHERE \"customers\".\"email\" = $1",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"menu_items\".\"id\" AS \"id\", \"menu_items\".\"name\" AS \"name\", \"menu_items\".\"price\" AS \"price\", \"menu_items\".\"image_url\" AS \"image_url\", \"menu_items\".\"description\" AS \"description\", \"menu_items\".\"restaurant_id\" AS \"restaurant_id\" FROM \"menu_items\" WHERE \"menu_items\".\"id\" = $1",
+          "calls": 50000
+        },
+        {
+          "query": "SELECT \"order_items\".\"id\" AS \"id\", \"order_items\".\"price\" AS \"price\", \"order_items\".\"cart_id\" AS \"cart_id\", \"order_items\".\"quantity\" AS \"quantity\", \"order_items\".\"menu_item_id\" AS \"menu_item_id\" FROM \"order_items\" WHERE \"order_items\".\"cart_id\" = $1",
+          "calls": 1000
+        },
+        {
+          "query": "SELECT \"carts\".\"id\" AS \"id\", \"carts\".\"total_price\" AS \"total_price\", \"carts\".\"customer_id\" AS \"customer_id\" FROM \"carts\" WHERE \"carts\".\"customer_id\" = $1",
+          "calls": 1000
+        }
+      ]
+    }
+  }
+]

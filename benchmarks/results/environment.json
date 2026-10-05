@@ -1,0 +1,103 @@
+{
+  "recorded_at_utc": "2026-09-09T01:59:22.829140+00:00",
+  "architecture": "arm64",
+  "hardware_model": "Mac14,9",
+  "memory_bytes": 17179869184,
+  "logical_cpus": 12,
+  "java": "openjdk 21.0.10 2026-01-20 LTS\nOpenJDK Runtime Environment Temurin-21.0.10+7 (build 21.0.10+7-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.10+7 (build 21.0.10+7-LTS, mixed mode, sharing)",
+  "node": "v22.22.2",
+  "docker_server": {
+    "Platform": {
+      "Name": "Docker Desktop 4.67.0 (222858)"
+    },
+    "Version": "29.3.1",
+    "ApiVersion": "1.54",
+    "MinAPIVersion": "1.40",
+    "Os": "linux",
+    "Arch": "arm64",
+    "Components": [
+      {
+        "Name": "Engine",
+        "Version": "29.3.1",
+        "Details": {
+          "ApiVersion": "1.54",
+          "Arch": "arm64",
+          "BuildTime": "Wed Mar 25 16:14:30 2026",
+          "Experimental": "false",
+          "GitCommit": "f78c987",
+          "GoVersion": "go1.25.8",
+          "KernelVersion": "6.12.76-linuxkit",
+          "MinAPIVersion": "1.40",
+          "Os": "linux"
+        }
+      },
+      {
+        "Name": "containerd",
+        "Version": "v2.2.1",
+        "Details": {
+          "GitCommit": "dea7da592f5d1d2b7755e3a161be07f43fad8f75"
+        }
+      },
+      {
+        "Name": "runc",
+        "Version": "1.3.4",
+        "Details": {
+          "GitCommit": "v1.3.4-0-gd6d73eb8"
+        }
+      },
+      {
+        "Name": "docker-init",
+        "Version": "0.19.0",
+        "Details": {
+          "GitCommit": "de40ad0"
+        }
+      }
+    ],
+    "GitCommit": "f78c987",
+    "GoVersion": "go1.25.8",
+    "KernelVersion": "6.12.76-linuxkit",
+    "BuildTime": "2026-03-25T16:14:30.000000000+00:00"
+  },
+  "postgres_image": {
+    "id": "sha256:d9c304353c031b21e9a7e33dc4781e272a9fa802a2ab9703fe4199d72ba1422c",
+    "digests": [
+      "postgres@sha256:d9c304353c031b21e9a7e33dc4781e272a9fa802a2ab9703fe4199d72ba1422c"
+    ],
+    "architecture": "arm64"
+  },
+  "jvm_limits": {
+    "active_processors": 2,
+    "xms_mb": 256,
+    "xmx_mb": 512
+  },
+  "postgres_limits": {
+    "cpus": 2,
+    "memory_gib": 2
+  },
+  "database_fixture": {
+    "restaurants": 100,
+    "menus": 10000,
+    "customers": 10100,
+    "order_items": 105000
+  },
+  "java_tests": [
+    {
+      "name": "io.github.zli2038.onlineorder.CartServiceTests",
+      "tests": "4",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "time": "0.294"
+    },
+    {
+      "name": "io.github.zli2038.onlineorder.CartDatabaseIntegrationTests",
+      "tests": "14",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "time": "7.307"
+    }
+  ],
+  "baseline_jar_sha256": "f6d8f02ed1b2e42fd9d4ecf1f67005b1b429f06d697bd9d9e746735cbfae91e8",
+  "optimized_jar_sha256": "4b032d5c14d65717856c7520943d9442a75916e0c16adabc07622537619a8b5a"
+}
